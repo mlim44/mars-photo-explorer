@@ -45,42 +45,96 @@ async function fetchPhotos(dateString) {
 }
 
 async function loadInitialPhotos() {
+ 
+    let dateChosen = "2015-6-3";
+    console.log("from load:", dateChosen);
+    const photos = await fetchPhotos(dateChosen);
 
-    const response = await fetchPhotos(marsRoverEndpoint);
-    // see works-consulted 
-    const photos = response.photos;
+    console.log(photos);
 
-    console.log(photos)
+    const description = "Mars Rover Photo: ";
+    displayPhotos(photos, description);
+}
 
-    // see works-consulted 
-    const onlyThree = photos.slice(0, 3);
+async function displayPhotos(photos, description) {
 
-    onlyThree.forEach(photo => {
-
-        const { 
-            id,
-            camera: { full_name }, 
-            earth_date, 
-            img_src, 
-        } = photo;
-
-        // Figure out how to create a new section 
+    photos.forEach(photo => {
 
         const newLiNode = document.createElement("li");
-        const image = document.createElement("img");
-        const description = `Image from Mars Rover:${id}, Earth Date: ${earth_date}, Camera: ${full_name}`
-        image.src = img_src
-        image.alt = description;
-        newLiNode.textContent = description;
-        const photosNode = document.querySelector("#photos-container");
-        photosNode.appendChild(image);
+        const roverImageNode = document.createElement("img");
+
+        const completedDescription = `${description} ${photo.id}, `+
+                                     `Earth date: ${photo.earth_date}, `+
+                                     `Camera: ${photo.full_name}`;
+        roverImageNode.src = photo.img_src;
+        roverImageNode.alt = completedDescription;
+        newLiNode.textContent = completedDescription;
+
+        photosNode.appendChild(roverImageNode);
         photosNode.appendChild(newLiNode);
     });
+}
+
+document.querySelector("#load-photos-button").addEventListener("click", function() {
+
+    const dateNode = document.querySelector("#photoDate");
+    let dateInputted = dateNode.value;
+    console.log(dateInputted);
+
+    const validatedDate = validDate(dateInputted);
+
+    let dateChosen = "";
+
+    if(!validatedDate["isValid"]) {
+        dateChosen = "2015-6-3";
+        alert(validatedDate["message"]);
+    } else {
+        dateChosen = dateInputted;
+    }
+    console.log("end of click:", dateChosen)
+    selectedPhotos(dateChosen);
+})
+
+// Function to check the validity of the date entered 
+const validDate = (dateInput) => {
+
+    let isValid = true;
+    let message = "";
     
+    const pattern = /^\d{4}-\d{2}-\d{2}$/;
+
+    // Checks if date entered is in valid format 
+    if (!pattern.test(dateInput)) {
+        isValid = false;        
+        message = "Incorrect date format.";
+    } else {
+
+        // Compares date entered to today's date
+        const maxDate = new Date("2024-02-19");
+        const minDate = new Date("2015-6-3");
+        const dateInputDate = new Date(dateInput);
+
+        if (dateInputDate > maxDate) {
+            isValid = false;
+            message = "Please select an earlier date than February 19, 2024.";
+        }  else if (dateInputDate < minDate) {
+            isValid = false;
+            message = "Please select a date no earlier than June 3, 2015.";
+        };
+    };
+
+    return { isValid, message };   
+}
+
+async function selectedPhotos(dateChosen) {
+
+    console.log(dateChosen);
+
+    photosNode.innerHTML = "";  
+
+    const photos = await fetchPhotos(dateChosen);
+    const description = "Mars Rover Photo: ";
+    displayPhotos(photos, description);
 }
 
 loadInitialPhotos();
-
-// async function displayPhotos(photos, description) {
-
-// }
