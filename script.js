@@ -76,3 +76,24 @@ async function displayPhotos(photos, description) {
         photosNode.appendChild(newLiNode);
     });
 }
+
+
+document.querySelector("#load-photos-button").addEventListener("click", function() {
+
+    const dateNode = document.querySelector("#photoDate");
+    let dateInputted = dateNode.value;
+    console.log(dateInputted);
+
+    const validatedDate = validDate(dateInputted);
+
+    let dateChosen = "";
+
+    if(!validatedDate["isValid"]) {
+        dateChosen = "2015-6-3";
+        alert(validatedDate["message"]);
+    } else {
+        dateChosen = dateInputted;
+    }
+    console.log("end of click:", dateChosen)
+    selectedPhotos(dateChosen);
+})
