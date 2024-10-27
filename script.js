@@ -4,6 +4,8 @@ console.log("Script started.")
 
 const photosNode = document.querySelector("#photos-container");
 
+loadInitialPhotos();
+
 async function fetchPhotos(dateString) {
 
     console.log("fetchPhotos started.")
@@ -45,42 +47,32 @@ async function fetchPhotos(dateString) {
 }
 
 async function loadInitialPhotos() {
+ 
+    let dateChosen = "2015-6-3";
+    console.log("from load:", dateChosen);
+    const photos = await fetchPhotos(dateChosen);
 
-    const response = await fetchPhotos(marsRoverEndpoint);
-    // see works-consulted 
-    const photos = response.photos;
+    console.log(photos);
 
-    console.log(photos)
-
-    // see works-consulted 
-    const onlyThree = photos.slice(0, 3);
-
-    onlyThree.forEach(photo => {
-
-        const { 
-            id,
-            camera: { full_name }, 
-            earth_date, 
-            img_src, 
-        } = photo;
-
-        // Figure out how to create a new section 
-
-        const newLiNode = document.createElement("li");
-        const image = document.createElement("img");
-        const description = `Image from Mars Rover:${id}, Earth Date: ${earth_date}, Camera: ${full_name}`
-        image.src = img_src
-        image.alt = description;
-        newLiNode.textContent = description;
-        const photosNode = document.querySelector("#photos-container");
-        photosNode.appendChild(image);
-        photosNode.appendChild(newLiNode);
-    });
-    
+    const description = "Mars Rover Photo: ";
+    displayPhotos(photos, description);
 }
 
-loadInitialPhotos();
+async function displayPhotos(photos, description) {
 
-// async function displayPhotos(photos, description) {
+    photos.forEach(photo => {
 
-// }
+        const newLiNode = document.createElement("li");
+        const roverImageNode = document.createElement("img");
+
+        const completedDescription = `${description} ${photo.id}, `+
+                                     `Earth date: ${photo.earth_date}, `+
+                                     `Camera: ${photo.full_name}`;
+        roverImageNode.src = photo.img_src;
+        roverImageNode.alt = completedDescription;
+        newLiNode.textContent = completedDescription;
+
+        photosNode.appendChild(roverImageNode);
+        photosNode.appendChild(newLiNode);
+    });
+}
