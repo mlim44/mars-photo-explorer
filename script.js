@@ -4,8 +4,6 @@ console.log("Script started.")
 
 const photosNode = document.querySelector("#photos-container");
 
-loadInitialPhotos();
-
 async function fetchPhotos(dateString) {
 
     console.log("fetchPhotos started.")
@@ -127,3 +125,16 @@ const validDate = (dateInput) => {
 
     return { isValid, message };   
 }
+
+async function selectedPhotos(dateChosen) {
+
+    console.log(dateChosen);
+
+    photosNode.innerHTML = "";  
+
+    const photos = await fetchPhotos(dateChosen);
+    const description = "Mars Rover Photo: ";
+    displayPhotos(photos, description);
+}
+
+loadInitialPhotos();
