@@ -1,18 +1,19 @@
-import { secretValue } from "./external.js";
-
 console.log("Script started.")
 
+// Imports API key 
+import { secretValue } from "./external.js";
+
 const photosNode = document.querySelector("#photos-container");
+const defaultDate = "2017-07-24";
 
 async function fetchPhotos(dateString) {
-
-    console.log("fetchPhotos started.")
 
     // see works-consulted 
     const marsRoverEndpoint = `https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?api_key=${secretValue}` +
                               `&earth_date=${dateString}`;
 
-    console.log(marsRoverEndpoint)
+    console.log("Fetching photos from", marsRoverEndpoint);
+
     try {
         const response = await fetch(marsRoverEndpoint);
 
@@ -22,57 +23,62 @@ async function fetchPhotos(dateString) {
             throw new Error(`Http error: ${response.status}`);
         };
 
-        console.log(response);
-
         // parse the response object into a JavaScript Object
         const photoObject = await response.json();
-
+        
         // deconstructs the json into an object 
         const { photos: [photo1, photo2, photo3] } = photoObject;
-        // see works-consulted 
-        return [photo1, photo2, photo3].map(photo => {
-            const { 
-                id,
-                camera: { full_name }, 
-                earth_date, 
-                img_src, 
-            } = photo;
-            return { id, full_name, earth_date, img_src };
-        });
+
+        if(photoObject.photos.length === 0 ) {
+            throw new Error(`No photos that day`);
+        } else {
+            // see works-consulted 
+            return [photo1, photo2, photo3].map(photo => {
+                const { 
+                    id,
+                    camera: { full_name }, 
+                    earth_date, 
+                    img_src, 
+                } = photo;
+                return { id, full_name, earth_date, img_src };
+            })
+        };
     } catch (error) {
-        console.error(error.message);
+        alert(error);
     }
 }
 
 async function loadInitialPhotos() {
- 
-    let dateChosen = "2015-6-3";
-    console.log("from load:", dateChosen);
+
+    let dateChosen = defaultDate;
     const photos = await fetchPhotos(dateChosen);
 
     console.log(photos);
 
     const description = "Mars Rover Photo: ";
-    displayPhotos(photos, description);
+    await displayPhotos(photos, description);
 }
 
 async function displayPhotos(photos, description) {
 
+ 
     photos.forEach(photo => {
-
+        
         const newLiNode = document.createElement("li");
         const roverImageNode = document.createElement("img");
-
+        
         const completedDescription = `${description} ${photo.id}, `+
-                                     `Earth date: ${photo.earth_date}, `+
-                                     `Camera: ${photo.full_name}`;
+        `Earth date: ${photo.earth_date}, `+
+        `Camera: ${photo.full_name}`;
         roverImageNode.src = photo.img_src;
         roverImageNode.alt = completedDescription;
         newLiNode.textContent = completedDescription;
-
+        
         photosNode.appendChild(roverImageNode);
         photosNode.appendChild(newLiNode);
+        
     });
+
 }
 
 document.querySelector("#load-photos-button").addEventListener("click", function() {
@@ -83,10 +89,10 @@ document.querySelector("#load-photos-button").addEventListener("click", function
 
     const validatedDate = validDate(dateInputted);
 
-    let dateChosen = "";
+    let dateChosen = "";   
 
     if(!validatedDate["isValid"]) {
-        dateChosen = "2015-6-3";
+        dateChosen = defaultDate;
         alert(validatedDate["message"]);
     } else {
         dateChosen = dateInputted;
@@ -94,6 +100,17 @@ document.querySelector("#load-photos-button").addEventListener("click", function
     console.log("end of click:", dateChosen)
     selectedPhotos(dateChosen);
 })
+
+async function selectedPhotos(dateChosen) {
+
+    console.log(dateChosen);
+
+    photosNode.innerHTML = "";  
+
+    const photos = await fetchPhotos(dateChosen);
+    const description = "Mars Rover Photo: ";
+    await displayPhotos(photos, description);
+}
 
 // Function to check the validity of the date entered 
 const validDate = (dateInput) => {
@@ -111,30 +128,19 @@ const validDate = (dateInput) => {
 
         // Compares date entered to today's date
         const maxDate = new Date("2024-02-19");
-        const minDate = new Date("2015-6-3");
+        const minDate = new Date("2012-08-06");
         const dateInputDate = new Date(dateInput);
 
         if (dateInputDate > maxDate) {
             isValid = false;
-            message = "Please select an earlier date than February 19, 2024.";
+            message = "Please select an earlier date than February 20, 2024.";
         }  else if (dateInputDate < minDate) {
             isValid = false;
-            message = "Please select a date no earlier than June 3, 2015.";
+            message = "Please select a date no earlier than August 6, 2012.";
         };
     };
 
     return { isValid, message };   
-}
-
-async function selectedPhotos(dateChosen) {
-
-    console.log(dateChosen);
-
-    photosNode.innerHTML = "";  
-
-    const photos = await fetchPhotos(dateChosen);
-    const description = "Mars Rover Photo: ";
-    displayPhotos(photos, description);
-}
+};
 
 loadInitialPhotos();
