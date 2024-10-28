@@ -58,22 +58,31 @@ async function loadInitialPhotos() {
 
 async function displayPhotos(photos, description) {
 
-    photos.forEach(photo => {
-        
-        const newPNode = document.createElement("p");
-        const roverImageNode = document.createElement("img");
-        
-        const completedDescription = `${description} ${photo.id}, `+
-        `Earth date: ${photo.earth_date}, `+
-        `Camera: ${photo.full_name}`;
-        roverImageNode.src = photo.img_src;
-        roverImageNode.alt = completedDescription;
-        newLiNode.textContent = completedDescription;
-        
-        photosNode.appendChild(roverImageNode);
-        photosNode.appendChild(newPNode);
-        
-    });
+    const newH2Node = document.createElement("h2");
+    photosNode.appendChild(newH2Node);
+
+    let galleryTitle = "";
+
+    if(!photos) {
+        galleryTitle = "No photos this day."
+    } else {
+        galleryTitle = `${description}`
+        photos.forEach(photo => {
+            
+            const newPNode = document.createElement("p");
+            const roverImageNode = document.createElement("img");
+            
+            const completedDescription = `${description} ${photo.id}, `+
+            `Earth date: ${photo.earth_date}, `+
+            `Camera: ${photo.full_name}`;
+            roverImageNode.src = photo.img_src;
+            roverImageNode.alt = completedDescription;
+            newPNode.textContent = completedDescription;
+            photosNode.appendChild(roverImageNode);
+            photosNode.appendChild(newPNode);
+        });
+    }
+    newH2Node.textContent = galleryTitle;
 }
 
 document.querySelector("#load-photos-button").addEventListener("click", function() {
@@ -138,4 +147,4 @@ const validDate = (dateInput) => {
     return { isValid, message };   
 };
 
-loadInitialPhotos();
+loadInitialPhotos(); 
