@@ -20,24 +20,36 @@
             Mars Rover Photos
         </h1>
     </header>
+
     <main>
         <p>
             Select dates to view photos
         </p>
-        <section id="photos-selector">
+        <section id="photos-selector-container">
+
             <div id="photo-date-container">
                 <label for="photoDate">
                     Photos Date
                 </label>
                 <input type="date" id="photoDate" name="photoDate">
             </div>
+
             <button id="load-photos-button">
                 Load Photos
             </button>
+
         </section>
         <section id="photos-container">
         </section>
+        
+        <footer>
+            <p> All images were retrieved from 
+                <a href="https://api.nasa.gov/">api.nasa.gov</a>
+            </p>
+        </footer>
+
     </main>
+
     <script src="script.js" type="module"></script>
 </body>
 </html>
