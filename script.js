@@ -8,6 +8,8 @@ const defaultDate = "2018-06-15";
 Retrieves data from the API using the datestring passed 
 in the argument and appends it to the URL.
 */
+loadInitialPhotos(); 
+
 async function fetchPhotos(dateString) {
     // see works-consulted 
     const marsRoverEndpoint = `https://api.nasa.gov/mars-photos/api/v1/rovers/` + 
@@ -28,8 +30,6 @@ async function fetchPhotos(dateString) {
         const object = await response.json();
         console.log(object);
 
-        // const { photos } = (await response.json()); 
-        // const { photos } = photoObject;
         const { photos } = object;
 
         // Ensures that photoobject contains photos
@@ -84,6 +84,9 @@ the description of each photo.
 
 async function displayPhotos(photos, description) {
 
+    // To clear photos from webpage 
+    photosNode.innerHTML = ""; 
+
     const newH2Node = document.createElement("h2");
     photosNode.appendChild(newH2Node);
 
@@ -132,9 +135,6 @@ Calls selectedPhotos function to pass the date into the
 fetchPhotos and displayPhotos function.
 */
 document.querySelector("#load-photos-button").addEventListener("click", function() {
-
-    // To clear photos from webpage 
-    photosNode.innerHTML = ""; 
 
     // Converts date from input date to a string 
     let dateChosen = "";  
@@ -214,4 +214,3 @@ const validDate = (dateInput) => {
     return { isValid, message };   
 };
 
-loadInitialPhotos(); 
