@@ -5,6 +5,7 @@ body {
 
     font-family: "Merriweather", serif;
     text-align: center;
+    font-size: 1rem;
 }
 
 h1 {
@@ -13,6 +14,11 @@ h1 {
     border-bottom: solid black 0.5rem;
 
     font-family: "Karla", sans-serif;
+    font-size: 2.5rem;
+}
+
+h2 {
+    font-size: 1.5rem;
 }
 
 p{
@@ -27,17 +33,21 @@ img {
     width: 60%;
 }
 
-li {
+#photos-container p {
     width: 60%;
-    list-style-type: none;
     text-align: center;
 
     padding: 0.5rem;
-    font-size: 10px;
+    padding-top: 0;
+    font-size: 1.0rem;
 }
 
 header {
     text-align: center;
+}
+
+footer {
+    font-size: .75rem;
 }
 
 #photos-selector {
